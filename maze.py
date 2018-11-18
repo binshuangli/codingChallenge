@@ -88,14 +88,16 @@ def parseInput(infile):
     input_file = open(infile, "r")
 
     for line in input_file:
-        if len(line.strip().split()) == 2:
-            maze = Maze(list(map(int,line.strip().split())))
-        elif line.strip().split()[2] in ['W','E','S','N']:
-            laser = Laser(list(map(int,line.strip().split()[:2])), line.strip().split()[2], maze)
-        else:
-            mirror = list(map(int,line.strip().split()[:2]))
-            mirror.extend(line.strip().split()[2])
-            maze.addMirror(mirror)
+        elements = line.strip().split()
+        if len(elements) == 2:
+            maze = Maze(list(map(int,elements)))
+        elif len(elements) == 3:
+            if elements[2] in ['W','E','S','N']:
+                laser = Laser(list(map(int,elements[:2])), elements[2], maze)
+            else:
+                mirror = list(map(int,elements[:2]))
+                mirror.extend(elements[2])
+                maze.addMirror(mirror)
 
     input_file.close()
 
@@ -111,17 +113,19 @@ def traverseMaze(maze, laser):
 
     next_mirror = laser.findClosestMirror()
 
+    #print(next_mirror)
+
     while next_mirror != []:
 
         previous_location = laser.curr_loc
-  
+
         #if the laser visits the same mirror in the same direction, it indicates the laser has been travelling in a loop.
         #return -1 for the squares traversed count and break out of the loop
         next_mirror.append(laser.curr_dirc)
 
         if tuple(next_mirror) in mirrors_visited:
             sq_traversed = -1
-            return sq_traversed
+            break
         else:
             mirrors_visited[tuple(next_mirror)] = 1
         
@@ -132,13 +136,20 @@ def traverseMaze(maze, laser):
         sq_traversed += abs(sum([a_i - b_i for a_i, b_i in zip(previous_location, laser.curr_loc)]))
 
         next_mirror = laser.findClosestMirror()
-        
-    #add the last segment of squares laser traveled
-    final_location = laser.findFinalLocation()
 
-    sq_traversed += abs(sum([a_i - b_i for a_i, b_i in zip(laser.curr_loc, final_location)]))
-    
-    return sq_traversed, final_location
+    if sq_traversed != -1:
+
+        #add the last segment of squares laser traveled
+        final_location = laser.findFinalLocation()
+
+        #print(final_location,laser.curr_loc)
+        sq_traversed += abs(sum([a_i - b_i for a_i, b_i in zip(laser.curr_loc, final_location)]))
+        
+        return sq_traversed, final_location
+
+    else:
+        return sq_traversed, "NA"
+        
     #if needed, one can also return all mirrors visited
 
 
