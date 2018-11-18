@@ -75,10 +75,14 @@ class Laser:
             return [0, self.curr_loc[1]] 
 
 class Maze:
-    def __init__(self, dimension):
+    def __init__(self):
+        self.width = 0
+        self.height = 0
+        self.mirrors = []
+
+    def setDimension(self, dimension):
         self.width = dimension[0]
         self.height = dimension[1]
-        self.mirrors = []
 
     def addMirror(self, mirror):
         self.mirrors.append(mirror)
@@ -87,10 +91,12 @@ def parseInput(infile):
 
     input_file = open(infile, "r")
 
+    maze = Maze()
+
     for line in input_file:
         elements = line.strip().split()
         if len(elements) == 2:
-            maze = Maze(list(map(int,elements)))
+            maze.setDimension(list(map(int,elements)))
         elif len(elements) == 3:
             if elements[2] in ['W','E','S','N']:
                 laser = Laser(list(map(int,elements[:2])), elements[2], maze)
