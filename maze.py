@@ -154,20 +154,20 @@ def traverseMaze(maze, laser):
 
 
 def main():
-	#parse the input file
-	maze, laser = parseInput(sys.argv[1])
+    #parse the input file
+    maze, laser = parseInput(sys.argv[1])
 
-	#output the number of the mirrors travsered and last location (ignored if in a loop)
-	sq_traversed, final_location = traverseMaze(maze, laser)
+    #output the number of the mirrors travsered and last location (ignored if in a loop)
+    sq_traversed, final_location = traverseMaze(maze, laser)
 
-	output_file = open(sys.argv[2],"w")
+    output_file = open(sys.argv[2],"w")
 
-	output_file.write(str(sq_traversed)+"\n")
+    output_file.write(str(sq_traversed)+"\n")
 
-	if sq_traversed > 0:
-	    output_file.write(" ".join(map(str, final_location)))
-    	output_file.close()
+    if sq_traversed > 0:
+        output_file.write(" ".join(map(str, final_location)))
+        output_file.close()
 
 
 if __name__ == '__main__':
-	main()
+    main()
