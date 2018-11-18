@@ -1,13 +1,20 @@
 import sys
 
 class Laser:
+    '''A laser has the following properties: 
+    curr_loc: current location
+    curr_dirc: current direction
+    maze: the maze the laser is traversing in
+    '''
     def __init__(self, curr_loc, curr_dirc, maze):
+        '''initiate a laser object with respective location, direction and maze'''
         self.curr_dirc = curr_dirc
         self.curr_loc = curr_loc
         self.maze = maze
 
-    #identify the new laser direction based on mirror position and current laser direction
     def newLaserDirection(self, mirror_position):
+        '''identify the new laser direction based on mirror position and current laser direction'''
+        
         if self.curr_dirc == "N":
             if mirror_position == "/":
                 self.curr_dirc = "E"
@@ -29,8 +36,8 @@ class Laser:
             else:
                 self.curr_dirc = "N"
 
-    #find the closest mirror based on laser location and direction, plus potential mirrors in the maze
     def findClosestMirror(self):
+        '''find the closest mirror based on laser location and direction, plus potential mirrors in the maze'''
 
         next_mirror = []
 
@@ -63,8 +70,8 @@ class Laser:
                 next_mirror = list([mirror for mirror in potential_mirrors if mirror[0] == max_x][0])
         return next_mirror
 
-    #once no mirrors are identified in the laser direction, find the final locaiton on the wall
     def findFinalLocation(self):
+        '''If no mirrors are identified in the laser direction, find the final locaiton on the wall'''
         if self.curr_dirc == "N":
             return [self.curr_loc[0], self.maze.height - 1]
         elif self.curr_dirc == "S":
@@ -75,6 +82,11 @@ class Laser:
             return [0, self.curr_loc[1]] 
 
 class Maze:
+    '''An maze has the following properties:
+    width: the width of the maze
+    height: the height of the maze
+    mirrors: if any mirrors exisit, it stores their locaiton and facing position
+    '''
     def __init__(self):
         self.width = 0
         self.height = 0
@@ -88,7 +100,7 @@ class Maze:
         self.mirrors.append(mirror)
 
 def parseInput(infile):
-
+    '''parse the informaiton from the input text, including maze dimension, laser intial informaiton (locaiton and direction), mirror informaiton'''
     input_file = open(infile, "r")
 
     maze = Maze()
@@ -110,8 +122,8 @@ def parseInput(infile):
     return maze, laser
 
 def traverseMaze(maze, laser):
-        
-    #calculated the traversed distance
+    '''calcaulted the number of squares the laser traversed and find the last location of the laser if it hits a wall'''
+    
     sq_traversed = 0
     
     #store all mirrors visited
@@ -156,14 +168,15 @@ def traverseMaze(maze, laser):
     else:
         return sq_traversed, "NA"
         
-    #if needed, one can also return all mirrors visited
+    #if needed, one can also return all mirrors visited by simply print out mirrors_visited
+    #alternatively, if one wants to record the path of the laser, one can use a list of lists to record the mirrors visited instead of a dictionary.
 
 
 def main():
-    #parse the input file
+    
     maze, laser = parseInput(sys.argv[1])
 
-    #output the number of the mirrors travsered and last location (ignored if in a loop)
+    #output the number of the mirrors travsered and last location (it will be NA if the laser is trapped in a loop)
     sq_traversed, final_location = traverseMaze(maze, laser)
 
     output_file = open(sys.argv[2],"w")
